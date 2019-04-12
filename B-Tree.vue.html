@@ -1,8 +1,17 @@
+<style>
+    .node {
+        display: inline-block; 
+        border: 1px solid black; 
+        padding: 5px; 
+        margin: 5px
+    }
+
+</style>
 <div id="app">
     <div style="overflow-x: scroll;">
         <div v-for="level in getTreeByLevels" class="row" style="text-align:center">
             <div style="white-space: nowrap">
-                <div v-for="node in level" style="display: inline-block; border: 1px solid black; padding: 5px; margin: 5px">
+                <div v-for="node in level" class="node">
                     {{node.data}}
                 </div>
             </div>
@@ -41,7 +50,6 @@
             this.insert(11);
             this.insert(32);
             this.insert(22);
-            this.updateCount();
         },
         computed: {
             totalHeight: function() {
@@ -121,6 +129,7 @@
                 } else {
                     this.insertNode(this.root, newNode);
                 }
+                this.updateCount();
             },
             insertNode: function(node, newNode) {
                 if (newNode.data < node.data) {
