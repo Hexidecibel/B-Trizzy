@@ -1,0 +1,179 @@
+<div id="app">
+    <div style="overflow-x: scroll;">
+        <div v-for="level in getTreeByLevels" class="row" style="text-align:center">
+            <div style="white-space: nowrap">
+                <div v-for="node in level" style="display: inline-block; border: 1px solid black; padding: 5px; margin: 5px">
+                    {{node.data}}
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+    <br /><br /><br /><br />
+    <input v-model="insertValue"/>
+    <button @click="addValueToTree(insertValue)">Insert</button>
+    <button @click="updateCount()">Count</button>
+
+    <h4>
+        Stats
+    </h4>
+    Total Height: {{totalHeight}}
+    <br />
+    Total # of elements: {{totalCount}}
+    
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data:  function() {
+            return {
+                root: null,
+                insertValue: null,
+                totalCount: 0
+            }
+        },
+        created: function() {
+            this.insert(25);
+            this.insert(13);
+            this.insert(15);
+            this.insert(36);
+            this.insert(11);
+            this.insert(32);
+            this.insert(22);
+            this.updateCount();
+        },
+        computed: {
+            totalHeight: function() {
+                return this.getHeight(this.root);
+            },
+            getTreeByLevels: function() {
+                if (this.root === null) return null;
+
+                var nodesByLevel = [];
+                var currentNode = this.root;
+                var nodeArray = [];
+
+                nodeArray.push(currentNode);
+                nodesByLevel.push(nodeArray);
+                var currentLevel = 0;
+                var loop = true;
+                while(loop) {
+                    var nodeArray = [];
+                    nodesByLevel[currentLevel].forEach(function(childNode) {
+                        var found = 0;
+                        if (childNode.left != null && nodeArray.indexOf(childNode.left == -1)) {
+                            nodeArray.push(childNode.left);
+                            found++;
+                        }
+                        if (childNode.right != null && nodeArray.indexOf(childNode.left == -1)) {
+                            nodeArray.push(childNode.right);
+                            found++;
+                        };
+                        for (var x=0; x< (2-found); x++) {
+                            nodeArray.push({"data":"<>"})
+                        }
+                    })
+
+                    var hasValue = false;
+                    nodeArray.forEach(function(node){
+                        if (node.data != "<>") hasValue = true;
+                    })
+                    if (!hasValue) loop = false;
+
+                    nodesByLevel.push(nodeArray);
+                    
+                    currentLevel++;
+                }
+                console.log(JSON.stringify(nodesByLevel));
+                return nodesByLevel;
+            },
+        },
+        methods: {
+            updateCount: function() {
+                this.totalCount = this.countNode(this.root)
+            },
+            countNode: function(node) {
+                var counter = 0;
+                if (node == null) return counter;
+                if (node.data) counter++;
+                return counter + (node.left != null ? this.countNode(node.left) : 0) + (node.right != null  ? this.countNode(node.right) : 0)
+            },
+            getHeight: function(node) {
+                if (node===null) return 0;
+                return Math.max(this.getHeight(node.left), this.getHeight(node.right))+1;
+            },
+            addValueToTree:function(value) {
+                this.insertValue == null;
+                this.insert(value);
+            
+            },
+            insert: function (data) {
+                this.insertValue = null;
+                if (this.search(this.root, data) != null) return;
+                var newNode = {
+                    "data": data,
+                    "left": null,
+                    "right": null
+                }
+                if (this.root === null) {
+                    this.root = newNode;
+                } else {
+                    this.insertNode(this.root, newNode);
+                }
+            },
+            insertNode: function(node, newNode) {
+                if (newNode.data < node.data) {
+                    if (node.left === null) {
+                        node.left = newNode;    
+                    } else {
+                        this.insertNode(node.left, newNode);
+                    }
+                } else {
+                    if (node.right === null) {
+                        node.right = newNode;
+                    } else {
+                        this.insertNode(node.right, newNode);
+                    }
+                }
+            },
+            getRootNode() {
+                return this.root;
+            },
+            inorder(node) {
+                if (node !== null) {
+                    this.inorder(node.left);
+                    console.log(node.data);
+                    this.inorder(node.right);
+                }
+            },
+            inorder_it() {
+                var nodes = [];
+                var current = root;
+                while (true) {
+                    while (!!current) {
+                        nodes.push(current);
+                        current = current.left;
+                    }
+
+                    if (nodes.length == 0) break;
+                    
+                    var lastCurrent = nodes.pop();
+                    console.log(lastCurrent.data);
+                    current = lastCurrent.right;
+                }
+            },
+            search(node, data) {
+                if(node === null) 
+                    return null; 
+                if (data < node.data) {
+                    return this.search(node.left, data);
+                } else if (data > node.data) {
+                    return this.search(node.right, data);
+                } else {
+                    return node;
+                }
+            }
+        }
+    })
+</script>
