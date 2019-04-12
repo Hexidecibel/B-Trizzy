@@ -8,7 +8,7 @@
 
 </style>
 <div id="app">
-    <div style="overflow-x: scroll;">
+    <div style="overflow-x: scroll; height: 500px">
         <div v-for="level in getTreeByLevels" class="row" style="text-align:center">
             <div style="white-space: nowrap">
                 <div v-for="node in level" class="node">
@@ -22,6 +22,7 @@
     <input v-model="insertValue"/>
     <button @click="addValueToTree(insertValue)">Insert</button>
     <button @click="updateCount()">Count</button>
+    <button @click="shuffle()">Shuffle</button>
 
     <h4>
         Stats
@@ -98,6 +99,38 @@
             },
         },
         methods: {
+            clear: function() {
+                this.root = null;
+                this.updateCount();
+            },
+            getAllValues(node) {
+                var ret = [];
+                if (node !== null) {
+                    if (node.data != "<>") ret.push(node.data);
+                    this.getAllValues(node.left).forEach(function(data) {
+                        ret.push(data);
+                    });
+                    this.getAllValues(node.right).forEach(function(data) {
+                        ret.push(data);
+                    });
+                }
+                return ret;
+            },
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            },
+            shuffle: function() {
+                var values = this.getAllValues(this.root);
+                this.clear();
+                this.shuffleArray(values);
+                values.forEach(function(value) {
+                    this.insert(value);
+                }.bind(this))
+                this.updateCount();
+            },
             updateCount: function() {
                 this.totalCount = this.countNode(this.root)
             },
@@ -114,7 +147,6 @@
             addValueToTree:function(value) {
                 this.insertValue == null;
                 this.insert(value);
-            
             },
             insert: function (data) {
                 this.insertValue = null;
