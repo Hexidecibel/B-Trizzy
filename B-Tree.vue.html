@@ -21,6 +21,8 @@
     <br /><br /><br /><br />
     <input v-model="insertValue"/>
     <button @click="addValueToTree(insertValue)">Insert</button>
+    <input v-model="searchValue"/>
+    <button @click="searchForValueInTree(searchValue)">Search</button>
     <button @click="updateCount()">Count</button>
     <button @click="shuffle()">Shuffle</button>
 
@@ -40,6 +42,7 @@
             return {
                 root: null,
                 insertValue: null,
+                searchValue: null,
                 totalCount: 0
             }
         },
@@ -147,6 +150,21 @@
             addValueToTree:function(value) {
                 this.insertValue == null;
                 this.insert(value);
+            },
+            searchForValueInTree: function(data) {
+                var node = this.getNodeEl(data)
+                var originalBgColor = node.style.backgroundColor;
+                if (node != null) {
+                    node.style.backgroundColor  = "#FDFF47";
+                    setTimeout(function() {
+                        node.style.backgroundColor  = originalBgColor;
+                    }, 2000)
+                }
+            },
+            getNodeEl: function(data) {
+                if (this.search(data) != null) {
+                    return this.$refs["node-" + data][0];
+                }
             },
             insert: function (data) {
                 this.insertValue = null;
