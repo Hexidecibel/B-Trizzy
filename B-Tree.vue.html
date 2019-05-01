@@ -11,7 +11,7 @@
     <div style="overflow-x: scroll; height: 500px">
         <div v-for="level in getTreeByLevels" class="row" style="text-align:center">
             <div style="white-space: nowrap">
-                <div v-for="node in level" class="node">
+                <div v-for="node in level" class="node" :ref="'node-' + node.data">
                     {{node.data}}
                 </div>
             </div>
@@ -21,10 +21,13 @@
     <br /><br /><br /><br />
     <input v-model="insertValue"/>
     <button @click="addValueToTree(insertValue)">Insert</button>
-    <input v-model="searchValue"/>
-    <button @click="searchForValueInTree(searchValue)">Search</button>
     <button @click="updateCount()">Count</button>
     <button @click="shuffle()">Shuffle</button>
+    <br />
+    <input v-model="searchValue"/>
+    <button @click="searchForValueInTree(searchValue)">Search</button>
+    <button @click="bfs(searchValue)">Breadth First Search</button>
+    <button @click="dfs(searchValue)">Depth First Search</button>
 
     <h4>
         Stats
@@ -54,6 +57,11 @@
             this.insert(11);
             this.insert(32);
             this.insert(22);
+            this.insert(100);
+            this.insert(45);
+            this.insert(692);
+            this.insert(55);
+            this.insert(14);
         },
         computed: {
             totalHeight: function() {
@@ -151,6 +159,16 @@
                 this.insertValue == null;
                 this.insert(value);
             },
+            highlightNode: function(nodeToHighlight) {
+                var node = this.getNodeEl(nodeToHighlight.data)
+                var originalBgColor = node.style.backgroundColor;
+                if (node != null) {
+                    node.style.backgroundColor  = "#FDFF47";
+                    setTimeout(function() {
+                        node.style.backgroundColor  = originalBgColor;
+                    }, 100)
+                }
+            },
             searchForValueInTree: function(data) {
                 var node = this.getNodeEl(data)
                 var originalBgColor = node.style.backgroundColor;
@@ -232,6 +250,41 @@
                 } else {
                     return node;
                 }
+            },
+            bfs(value) {
+                var queue = [];
+                queue.push(this.root);
+
+                while (queue.length > 0) {
+                    for (var x=0; x<queue.length; x++) {
+                        var curr = queue.shift();
+
+                        this.highlightNode(curr);
+
+                        if (curr.data == value) return curr;
+                
+                        if (curr.left) queue.push(curr.left);
+                        if (curr.right) queue.push(curr.right);
+                    }
+                }
+                return null;
+            },
+            dfs(value) {
+                var stack = [];
+                stack.push(this.root);
+
+                while (stack.length > 0) {
+                    for (var x=0; x<stack.length; x++) {
+                        var curr = stack.pop();
+
+                        this.highlightNode(curr);
+                        if (curr.data == value) return curr;
+                    
+                        if (curr.right) stack.push(curr.right);
+                        if (curr.left) stack.push(curr.left);
+                    }
+                }
+                return null;
             }
         }
     })
