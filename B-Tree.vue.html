@@ -11,7 +11,7 @@
     <div style="overflow-x: scroll; height: 500px">
         <div v-for="level in getTreeByLevels" class="row" style="text-align:center">
             <div style="white-space: nowrap">
-                <div v-for="node in level" class="node" :ref="'node-' + node.data">
+                <div v-for="node in level" class="node" :ref="'node-' + node.data" @click="highlightNode(node)">
                     {{node.data}}
                 </div>
             </div>
@@ -27,6 +27,7 @@
     <input v-model="searchValue"/>
     <button @click="bfs(searchValue)">Breadth First Search</button>
     <button @click="dfs(searchValue)">Depth First Search</button>
+    <button @click="binary(null, searchValue)">Binary Search</button>
 
     <h4>
         Stats
@@ -251,6 +252,7 @@
             },
             bfs(value) {
                 var queue = [];
+                var highlightNodes = [];
                 queue.push(this.root);
 
                 while (queue.length > 0) {
@@ -293,6 +295,26 @@
                 }
                 this.highlightNodes(highlightNodes)
                 return null;
+            },
+            binary(node, data, highlightNodes) {       
+                if(node == null) node = this.root;
+                if (highlightNodes == null) highlightNodes = [];
+
+                highlightNodes.push(node);
+
+                if(node == null) {
+                    this.highlightNodes(highlightNodes);
+                    return null; 
+                }
+                    
+                if (data < node.data) {
+                    return this.binary(node.left, data, highlightNodes);
+                } else if (data > node.data) {
+                    return this.binary(node.right, data, highlightNodes);
+                } else {
+                    this.highlightNodes(highlightNodes);
+                    return node;
+                }
             }
         }
     })
