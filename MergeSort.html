@@ -1,0 +1,26 @@
+<script>
+    function mergeSort (arr) {
+        if (arr.length == 1) {
+            return arr;
+        } 
+
+        const middle = Math.floor(arr.length/2);
+        var sortedLeft = mergeSort(arr.slice(0, middle));
+        var sortedRight = mergeSort(arr.slice(middle))
+
+        return merge(sortedLeft, sortedRight);
+    }
+
+    function merge(left, right) {
+        var result = [];
+        
+        while (left.length > 0 && right.length > 0) {
+            result.push(left[0] < right[0]? left.shift() : right.shift());
+        }
+            
+        return result.concat(left.length? left : right);
+    }
+
+    var list = [3, 6, 2599, 7, 3, 124, 5, 15, 53, 234, 1235, 1];
+    console.log(mergeSort(list));
+</script>
