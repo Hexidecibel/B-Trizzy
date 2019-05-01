@@ -25,7 +25,6 @@
     <button @click="shuffle()">Shuffle</button>
     <br />
     <input v-model="searchValue"/>
-    <button @click="searchForValueInTree(searchValue)">Search</button>
     <button @click="bfs(searchValue)">Breadth First Search</button>
     <button @click="dfs(searchValue)">Depth First Search</button>
 
@@ -159,6 +158,15 @@
                 this.insertValue == null;
                 this.insert(value);
             },
+            highlightNodes: function(nodes) {
+                var curr = nodes.shift();
+
+                this.highlightNode(curr);
+
+                if (nodes.length > 0) {
+                    setTimeout(function() {this.highlightNodes(nodes)}.bind(this), 750);
+                }
+            },
             highlightNode: function(nodeToHighlight) {
                 var node = this.getNodeEl(nodeToHighlight.data)
                 var originalBgColor = node.style.backgroundColor;
@@ -166,17 +174,7 @@
                     node.style.backgroundColor  = "#FDFF47";
                     setTimeout(function() {
                         node.style.backgroundColor  = originalBgColor;
-                    }, 100)
-                }
-            },
-            searchForValueInTree: function(data) {
-                var node = this.getNodeEl(data)
-                var originalBgColor = node.style.backgroundColor;
-                if (node != null) {
-                    node.style.backgroundColor  = "#FDFF47";
-                    setTimeout(function() {
-                        node.style.backgroundColor  = originalBgColor;
-                    }, 2000)
+                    }, 750)
                 }
             },
             getNodeEl: function(data) {
@@ -259,31 +257,41 @@
                     for (var x=0; x<queue.length; x++) {
                         var curr = queue.shift();
 
-                        this.highlightNode(curr);
+                        highlightNodes.push(curr);
 
-                        if (curr.data == value) return curr;
+                        if (curr.data == value) {
+                            this.highlightNodes(highlightNodes)
+                            return curr;
+                        }
                 
                         if (curr.left) queue.push(curr.left);
                         if (curr.right) queue.push(curr.right);
                     }
                 }
+                this.highlightNodes(highlightNodes)
                 return null;
             },
             dfs(value) {
                 var stack = [];
+                var highlightNodes = [];
                 stack.push(this.root);
 
                 while (stack.length > 0) {
                     for (var x=0; x<stack.length; x++) {
                         var curr = stack.pop();
 
-                        this.highlightNode(curr);
-                        if (curr.data == value) return curr;
+                        highlightNodes.push(curr);
+
+                        if (curr.data == value) {
+                            this.highlightNodes(highlightNodes)
+                            return curr;
+                        }
                     
                         if (curr.right) stack.push(curr.right);
                         if (curr.left) stack.push(curr.left);
                     }
                 }
+                this.highlightNodes(highlightNodes)
                 return null;
             }
         }
