@@ -1,0 +1,63 @@
+<div id="app">
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: function() {
+            return {
+
+            }
+        },
+        methods: {
+            removeLetterAtIndex: function(str, index) {
+                var strArray = str.split('');
+                strArray.splice(index, 1);
+                return strArray.join('');
+            },
+            checkTwoSidedRemoval: function(str1, str2) {
+                for (var i = 0; str1.length > str2.length ? i < str1.length : i < str2.length; i++) {
+                    if (this.removeLetterAtIndex(str1, i) === this.removeLetterAtIndex(str2, i)) return true;
+                }
+                return false;
+            },
+            checkOneSidedRemoval: function(str1, strToRemoveFrom) {
+                for (var i = 0; i < strToRemoveFrom.length; i++) {
+                    if (this.removeLetterAtIndex(strToRemoveFrom, i) === str1) return true;
+                }
+                return false;
+            },
+            checkEdits: function(str1, str2) {
+                if (str1 == null || str2 == null) return false;
+                // If already equal - return true (0 edits)
+                if (str1 == str2) return true;
+                // If length of str1 and str has a difference of <-1 or >1, return false as it's more than 1 edit away
+                if (str1.length-str2.length < -2 || str1.length-str2.length > 2) return false;
+                // Check for single char removals one way
+                if (this.checkOneSidedRemoval(str1, str2)) return true;
+                // Check for single char removal other way
+                if (this.checkOneSidedRemoval(str2, str1)) return true;
+
+                // Check same char removal   
+                if (this.checkTwoSidedRemoval(str1, str2)) return true;
+
+                return false;
+            }
+        },
+        created: function() {
+            console.log("should be true");
+            console.log(this.checkEdits('poo', 'poor'));
+            console.log(this.checkEdits('blah', 'blah'));
+            console.log(this.checkEdits('blah', 'bla'));
+            console.log(this.checkEdits('blah', 'lah'));
+            console.log(this.checkEdits('blah', 'brah'));
+
+            console.log("should be false")
+            console.log(this.checkEdits('blah', 'ree'));
+            console.log(this.checkEdits('', 'ree'));
+            console.log(this.checkEdits(null,'blah'));
+        }
+    });
+
+</script>
