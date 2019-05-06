@@ -43,9 +43,43 @@
                 if (this.checkTwoSidedRemoval(str1, str2)) return true;
 
                 return false;
+            },
+            merge(arr1, arr2) {
+                var result = [];
+                while (arr1.length > 0 && arr2.length > 0) {
+                    arr1[0] < arr2[0] ? result.push(arr1.shift()) : result.push(arr2.shift()); 
+                }
+                result = arr1.length > 0 ? result.concat(arr1) : result.concat(arr2);
+                return result;
+            },
+            mergeSort(arr) {
+                if (arr.length ==1) return arr;
+                var middleIndex = Math.floor(arr.length/2);
+                var leftSorted = this.mergeSort(arr.slice(0, middleIndex));
+                var rightSorted = this.mergeSort(arr.slice(middleIndex, arr.length));
+
+                return this.merge(leftSorted, rightSorted);
+            },
+            binarySearch(arr, value) {
+                var index  = Math.floor(arr.length/2);
+                if (value == arr[index]) return value;
+                if (arr.length == 1) return "NOT FOUND";
+                if (value < arr[index]) {
+                    return this.binarySearch(arr.slice(0, index), value);
+                } else {
+                    return this.binarySearch(arr.slice(index, arr.length), value);
+                }
+                return "NOT FOUND";
             }
         },
         created: function() {
+            console.log("mergeSort:")
+            console.log(this.mergeSort([3, 6, 7, 4, 2, 1, 5, 9, 10, 8]));
+            console.log("binarySearch");
+            console.log(this.binarySearch([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4))
+            console.log(this.binarySearch([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 8))
+            console.log(this.binarySearch([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 100))
+            console.log("checkEdits:")
             console.log("should be true");
             console.log(this.checkEdits('poo', 'poor'));
             console.log(this.checkEdits('blah', 'blah'));
