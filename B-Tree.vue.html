@@ -50,18 +50,9 @@
             }
         },
         created: function() {
-            this.insert(25);
-            this.insert(13);
-            this.insert(15);
-            this.insert(36);
-            this.insert(11);
-            this.insert(32);
-            this.insert(22);
-            this.insert(100);
-            this.insert(45);
-            this.insert(692);
-            this.insert(55);
-            this.insert(14);
+            for (var x =0; x<15; x++) {
+                this.insert(Math.floor(Math.random()*500));
+            }
         },
         computed: {
             totalHeight: function() {
