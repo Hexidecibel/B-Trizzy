@@ -25,6 +25,13 @@
     <button @click="shuffle()">Shuffle</button>
     <button @click="rebalance()">Rebalance</button>
     <br />
+    
+    <div style="display: inline-block">
+        <button @click="randomizeTreeValues(randomizeValue)">Randomize</button>
+        <input v-model="randomizeValue"/>
+    </div>
+    nodes
+    <br />
     <input v-model="searchValue"/>
     <button @click="bfs(searchValue)">Breadth First Search</button>
     <button @click="dfs(searchValue)">Depth First Search</button>
@@ -47,13 +54,12 @@
                 root: null,
                 insertValue: null,
                 searchValue: null,
+                randomizeValue: null,
                 totalCount: 0
             }
         },
         created: function() {
-            for (var x =0; x<15; x++) {
-                this.insert(Math.floor(Math.random()*100));
-            }
+            this.randomizeTreeValues(15);
             console.log("===========================")
             console.log(this.getTreeArray(this.getRootNode()));
         },
@@ -84,7 +90,7 @@
                             nodeArray.push(childNode.right);
                             found++;
                         };
-                        for (var x=0; x< (2-found); x++) {
+                        for (var x=0; x<(2-found); x++) {
                             nodeArray.push({"data":"<>"})
                         }
                     })
@@ -107,6 +113,12 @@
             clear: function() {
                 this.root = null;
                 this.updateCount();
+            },
+            randomizeTreeValues(n) {
+                this.clear();
+                while(this.countNode(this.getRootNode()) < 50) {
+                    this.insert(Math.floor(Math.random()*1000));    
+                }
             },
             getAllValues(node) {
                 var ret = [];
@@ -253,17 +265,27 @@
                     return node;
                 }
             },
+            insertMiddle(node, array) {
+                var middle = Math.floor(array.length/2);
+                this.insert(array.splice(middle,1)[0]);
+                return array;
+            },
             rebalance(tree) {
                 var sortedTreeArray = this.getTreeArray(this.getRootNode());
                 this.clear();
+
+                if (sortedTreeArray.length == 1) {
+                    this.insert(sortedTreeArray.shift());
+                    return;
+                }
                 var middle = Math.floor(sortedTreeArray.length/2);
-                this.insert(sortedTreeArray.slice(middle, middle+1))
-                
-    
-                var sortedLeft = sortedTreeArray.slice(0, middle);
-                var sortedRight = sortedTreeArray.splice(middle+1, sortedTreeArray.length);
-                this.rebalanceHelper(sortedLeft);
-                this.rebalanceHelper(sortedRight);
+                this.insert(sortedTreeArray[middle]);
+                var leftSorted = sortedTreeArray.slice(0, middle);
+                var rightSorted = sortedTreeArray.slice(middle+1, sortedTreeArray.length);
+                while (leftSorted.length && rightSorted.length) {
+                    leftSorted = this.insertMiddle(this.getRootNode(), leftSorted);
+                    rightSorted = this.insertMiddle(this.getRootNode(), rightSorted);
+                }
             },  
             rebalanceHelper(array) {
                 if (array.length ==1 || array.length == 2) {
