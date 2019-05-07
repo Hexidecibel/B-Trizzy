@@ -62,6 +62,10 @@
             this.randomizeTreeValues(15);
             console.log("===========================")
             console.log(this.getTreeArray(this.getRootNode()));
+            console.log("===========================")
+            console.log("Look and say");
+            console.log("===========================")
+            this.printLookAndSay(5);
         },
         computed: {
             totalHeight: function() {
@@ -367,6 +371,31 @@
                     this.highlightNodes(highlightNodes);
                     return node;
                 }
+            },
+            printLookAndSay(n) {
+                var val = 1;
+                for (var x =1; x <= n; x++) {
+                    console.log(val + "\n");
+                    val = this.getLookAndSayVal(val);
+                }
+            },
+
+            getLookAndSayVal(val) {
+                var val = val.toString();
+                if (val.length == 1) return "1" + val;
+                var ret = "";
+                var current = val[0];
+                var count = 1;
+                for (var x =1; x<= val.length; x++) {
+
+                    if (current != val[x] || x == val.length) {
+                        ret += count + "" + current;
+                        current = val[x];
+                    } else {
+                        count++;
+                    }
+                }
+                return ret;
             }
         }
     })
