@@ -257,16 +257,29 @@
                 var sortedTreeArray = this.getTreeArray(this.getRootNode());
                 this.clear();
                 var middle = Math.floor(sortedTreeArray.length/2);
-                this.insert(sortedTreeArray[middle]);
-                var leftCounter = middle-1;
-                var rightCounter = middle+1;
-                while (sortedTreeArray[leftCounter] && sortedTreeArray[rightCounter]) {
-                    if (sortedTreeArray[leftCounter]) this.insert(sortedTreeArray[leftCounter]);
-                    if (sortedTreeArray[rightCounter]) this.insert(sortedTreeArray[rightCounter]);
-                    leftCounter--;
-                    rightCounter++;
-                }
+                this.insert(sortedTreeArray.slice(middle, middle+1))
+                
+    
+                var sortedLeft = sortedTreeArray.slice(0, middle);
+                var sortedRight = sortedTreeArray.splice(middle+1, sortedTreeArray.length);
+                this.rebalanceHelper(sortedLeft);
+                this.rebalanceHelper(sortedRight);
             },  
+            rebalanceHelper(array) {
+                if (array.length ==1 || array.length == 2) {
+                    for (var i=0; i< array.length; i++) {
+                        this.insert(this.getRootNode(), array[i]);
+                    }
+                    return;
+                }
+
+                //More than 2, let's keep halving until we have 1 or 2
+                var middle = Math.floor(array.length/2);
+                var sortedLeft = array.slice(0, middle);
+                var sortedRight = array.splice(middle+1, array.length);
+                this.rebalanceHelper(sortedLeft);
+                this.rebalanceHelper(sortedRight);
+            },
             bfs(value) {
                 var queue = [];
                 var highlightNodes = [];
