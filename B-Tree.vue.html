@@ -11,8 +11,8 @@
     <div style="overflow-x: scroll; height: 500px">
         <div v-for="level in getTreeByLevels" class="row" style="text-align:center">
             <div style="white-space: nowrap">
-                <div v-for="node in level" class="node" :ref="'node-' + node.data" @click="highlightNode(node)">
-                    {{node.data}}
+                <div v-for="node in level" class="node" :ref="'node-' + node.data" @click="highlightNode(node)" style="width: 30px; height: 30px">
+                    {{node.data != "<>" ? node.data : null}}
                 </div>
             </div>
             <br />
@@ -45,7 +45,7 @@
     Total # of elements: {{totalCount}}
     
 </div>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="/Users/hexi/local/vendor/vue/dist/vue.min.js"></script>
 <script>
     var app = new Vue({
         el: '#app',
@@ -59,7 +59,7 @@
             }
         },
         created: function() {
-            this.randomizeTreeValues(15);
+            this.randomizeTreeValues(5);
             console.log("===========================")
             console.log(this.getTreeArray(this.getRootNode()));
             console.log("===========================")
@@ -114,6 +114,15 @@
             },
         },
         methods: {
+            height: function(node) {
+                if (node == null) return 0;
+                return Math.max(this.height(node.left) + this.height(node.left))+1
+            },   
+            pathHelper: function(left, right, array) {
+                if (left == null && right == null) {
+                    // leafy, push new empty array and return
+                }
+            },
             clear: function() {
                 this.root = null;
                 this.updateCount();

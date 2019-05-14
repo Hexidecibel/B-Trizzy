@@ -53,6 +53,9 @@
                 }
                 return false;
             },
+            anagramIndexOf(input, search) {
+                if (input == search) return 0;
+            },
             removeChar(str, index) {
                 var arr = str.split("");
                 arr.splice(index, 1);
@@ -131,6 +134,7 @@
                     return memo[n];
                 }
             },
+            // counting 1, 2, 3 steps
             countWays(val) {
                 var mem = Array(val+1).fill(-1);
                 return this.countWaysHelper(val, mem)

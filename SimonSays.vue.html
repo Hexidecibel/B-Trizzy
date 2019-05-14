@@ -1,0 +1,173 @@
+<style>
+    .innerContainer {
+        color: white; 
+        text-align: center; 
+        margin: 10px;
+    }
+
+    .settingsContainer {
+        cursor: pointer; 
+        position: absolute; 
+        right: 0; 
+        right: 0;
+        background-color: darkgrey; 
+        z-index: 1000;  
+        margin-top: 5px; 
+        margin-right: 5px;
+    }
+
+    .startGameContainer {
+        cursor: pointer; 
+        position: absolute; 
+        left: 40%; 
+        right: 40%;  
+        top: 40%; 
+        bottom: 40%; 
+        background-color: darkgrey; 
+        z-index: 1000;
+    }
+
+    .alertContainer {
+        cursor: pointer; 
+        position: absolute; 
+        left: 40%; 
+        right: 40%;  
+        top: 40%; 
+        bottom: 40%; 
+        background-color: darkgrey; 
+        z-index: 1000;
+    }
+</style>
+<div id="app">
+    <div v-if="!isPlaying" class="settingsContainer" @click="openSettings">
+        <div class="innerContainer">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+
+    <div v-if="alert != null"  class="alertContainer" @click="alert.action">
+        <div style="color: white; text-align: center; margin-top: 60px; font-size: 20">
+            {{alert.message ? alert.message : alert }}
+        </div>
+    </div>
+
+    <div ref="gameContainer" style="background-color: white; position: absolute; left: 0; right: 0; top: 0; bottom: 0;">
+        <div ref="b" style="cursor: pointer; position:absolute; left: 0; top: 0; right: 50%; bottom: 50%; background-color: blue" @click="userInput('b')">
+        </div>
+        <div ref="r" style="cursor: pointer; position:absolute; left: 50%; top: 0; right: 0; bottom: 50%; background-color: red" @click="userInput('r')">
+        </div>
+        <div ref="g" style="cursor: pointer; position:absolute; left: 0; top: 50%; right: 50%; bottom: 0; background-color: green" @click="userInput('g')">
+        </div>
+        <div ref="y" style="cursor: pointer; position:absolute; left: 50%; top: 50%; right: 0; bottom: 0; background-color: yellow" @click="userInput('y')">
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<script src="/Users/hexi/local/src/lib-cats-sal/lib-web-resources/src/main/resources/vendor/vue/2.5.16/vue.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data:  function() {
+            return {
+                isPlaying: false,
+                listening: false,
+                alert: {message: "START PLAYING?", action: this.startGame},
+                colorArray: ['y', 'r', 'b', 'g'],
+                sequenceArray: [],
+                userPatternArray: [],
+                showSettings: false,
+                counter: 3,
+                highScore: 0
+            }
+        },
+        methods: {
+            openSettings: function() {
+                
+            },  
+            userInput: function(key) {
+                // If not listening, don't accept input
+                if (!this.listening) return;
+                this.listening = false;
+
+                // Flash User input
+                this.flashTile(key);
+                setTimeout(function() {
+                    this.userPatternArray.push(key);
+
+                    // Check for wrong answer first
+                    if (this.userPatternArray.join("") != this.sequenceArray.slice(0, this.userPatternArray.length).join("")) {
+                        this.alert = {message: "WRONG - GAME OVER", action: null};
+                        this.sequenceArray = [];
+                        this.isPlaying = false;
+
+                        setTimeout(function() {
+                            this.alertMessage = {message: "START PLAYING?", action: function() {startGame}};
+                        }.bind(this), 3000);
+                        return;
+                    }
+
+                    // Return if userPatternArray is not as long as sequenceArray
+                    if (this.userPatternArray.length != this.sequenceArray.length) {
+                        this.listening = true;
+                        return;
+                    }
+
+                    // Patterns match!  winner winner
+                    if (this.userPatternArray.join("") == this.sequenceArray.join("")) {
+                        this.alert = {message: "CORRECT", action: null};
+                        setTimeout(function() {
+                            this.alert = null;
+                            this.addToPattern();
+                            this.listening = false;
+                        }.bind(this), 3000);
+                    } else {
+                        // Shouldn't be possible, yo
+                        debugger
+                    }
+                }.bind(this), 500);
+            },
+            flashTile: function(key) {
+                this.$refs[key].style.opacity = ".5";
+                setTimeout(function() {
+                    this.$refs[key].style.opacity = "1";
+                }.bind(this), 500)
+            },
+            showPattern: function(cnt) {
+                if (cnt == void 0) cnt = 0;
+                setTimeout(function() {
+                    if (cnt == this.sequenceArray.length) {
+                        this.listening = true;
+                        return;
+                    } else {
+                        this.flashTile(this.sequenceArray[cnt]);
+                        setTimeout(function() {
+                            this.showPattern(cnt+1);
+                        }.bind(this), 400);
+                    }
+                }.bind(this), 400)
+            },
+            addToPattern: function() {
+                this.userPatternArray = [];
+                this.sequenceArray.push(this.colorArray[Math.floor(Math.random()*4)]);
+                this.showPattern();
+            },
+            countdown: function() {
+                while(counter > 0) {
+                    setTimeout(function() {
+                        this.counter--;
+
+                        if (this.counter > 0) {
+                            this.countdown();
+                        }
+                    }.bind(this), 1000);
+                }
+            },
+            startGame: function() {
+                // Set Vars and start countdown!
+                this.alert = this.counter
+                this.isPlaying = true;
+                this.countdown();
+            }
+        }
+    });
+</script>
