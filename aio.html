@@ -1,0 +1,26 @@
+
+<script>
+// Sort anagram into string
+// Scan forward 
+// Once we find a letter - we could return back the number of characters from the string we need and sort both
+
+function aio(string, anagramSubstring) {
+    var anagramCharArray = anagramSubstring.split("");
+    var sortedAnagram  = anagramCharArray.sort().join("");
+    // Loop through each letter
+    for (var charIndex=0; charIndex<string.length; charIndex++) {
+        if (anagramCharArray.indexOf(string[charIndex]) != -1) {
+            var charWindow = string.slice(charIndex, charIndex+anagramCharArray.length);
+            if (charWindow.split("").sort().join("") == sortedAnagram) return charIndex;
+        }
+    }
+    return -1;
+}
+
+console.log(aio("abcde", "abc"));
+console.log(aio("abcde", "dbc"));
+console.log(aio("abcde", "bdc"));
+console.log(aio("abcbdde", "bdc"));
+console.log(aio("abcbdde", "foo"));
+console.log(aio("abcbdde", ""));
+</script>
