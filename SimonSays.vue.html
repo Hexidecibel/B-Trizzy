@@ -39,17 +39,27 @@
     }
 </style>
 <div id="app">
-    <div v-if="!isPlaying" class="settingsContainer" @click="openSettings">
+    <div v-if="!isPlaying" class="settingsContainer">
         <div class="innerContainer">
-            <i class="fas fa-cog"></i>
+            High Score: {{highScore}}
         </div>
     </div>
 
     <div v-if="alert != null"  class="alertContainer" @click="alert.action">
-        <div style="color: white; text-align: center; margin-top: 60px; font-size: 20">
-            {{alert.message ? alert.message : alert }}
+        <div style="color: white; text-align: center; margin-top: 20px; font-size: 20;">
+            {{alert.message}}
+            <br /><br />
+            {{alert.message2}}
+            <br /><br />
+            {{alert.message3}}
         </div>
     </div>
+
+    <div v-if="counter != null"  class="alertContainer">
+            <div style="color: white; text-align: center; margin-top: 60px; font-size: 20">
+                {{counter}}
+            </div>
+        </div>
 
     <div ref="gameContainer" style="background-color: white; position: absolute; left: 0; right: 0; top: 0; bottom: 0;">
         <div ref="b" style="cursor: pointer; position:absolute; left: 0; top: 0; right: 50%; bottom: 50%; background-color: blue" @click="userInput('b')">
@@ -71,12 +81,12 @@
             return {
                 isPlaying: false,
                 listening: false,
-                alert: {message: "START PLAYING?", action: this.startGame},
+                alert: {message2: "START PLAYING?", action: this.startGame},
                 colorArray: ['y', 'r', 'b', 'g'],
                 sequenceArray: [],
                 userPatternArray: [],
                 showSettings: false,
-                counter: 3,
+                counter: null,
                 highScore: 0
             }
         },
@@ -96,13 +106,17 @@
 
                     // Check for wrong answer first
                     if (this.userPatternArray.join("") != this.sequenceArray.slice(0, this.userPatternArray.length).join("")) {
-                        this.alert = {message: "WRONG - GAME OVER", action: null};
+                        var score = this.sequenceArray.length-1;
+                        this.alert = {message: "WRONG - GAME OVER", 
+                                        message2: "SCORE: " + score.toString(), 
+                                        action: function() {this.alert = {message2: "START PLAYING?", action: this.startGame}}.bind(this)};
+                        if (this.highScore < score) {
+                            this.highScore = score;
+                            this.alert.message3 = "NEW HIGH SCORE!!!"
+                        }
+                        
                         this.sequenceArray = [];
                         this.isPlaying = false;
-
-                        setTimeout(function() {
-                            this.alertMessage = {message: "START PLAYING?", action: function() {startGame}};
-                        }.bind(this), 3000);
                         return;
                     }
 
@@ -114,7 +128,7 @@
 
                     // Patterns match!  winner winner
                     if (this.userPatternArray.join("") == this.sequenceArray.join("")) {
-                        this.alert = {message: "CORRECT", action: null};
+                        this.alert = {message2: "CORRECT", action: null};
                         setTimeout(function() {
                             this.alert = null;
                             this.addToPattern();
@@ -152,22 +166,25 @@
                 this.showPattern();
             },
             countdown: function() {
-                while(counter > 0) {
-                    setTimeout(function() {
-                        this.counter--;
+                setTimeout(function() {
+                    this.counter--;
 
-                        if (this.counter > 0) {
-                            this.countdown();
-                        }
-                    }.bind(this), 1000);
-                }
+                    if (this.counter > 0) {
+                        this.countdown();
+                    } else {
+                        this.counter = null;
+                        this.addToPattern();
+                    }
+                }.bind(this), 1000);
             },
             startGame: function() {
                 // Set Vars and start countdown!
-                this.alert = this.counter
+                this.alert = null;
+                this.counter = 3;
                 this.isPlaying = true;
                 this.countdown();
             }
+
         }
     });
 </script>

@@ -59,13 +59,7 @@
             }
         },
         created: function() {
-            this.randomizeTreeValues(5);
-            console.log("===========================")
-            console.log(this.getTreeArray(this.getRootNode()));
-            console.log("===========================")
-            console.log("Look and say");
-            console.log("===========================")
-            this.printLookAndSay(5);
+            this.insertSortedArray([1, 2, 3, 4, 5]);
         },
         computed: {
             totalHeight: function() {
@@ -114,6 +108,14 @@
             },
         },
         methods: {
+            insertSortedArray(array) {
+                while(array.length > 1) {
+                    var middle = Math.ceil(array.length/2);
+                    this.insert(array[middle])
+                    array.splice(middle, 1);
+                }
+                this.insert(array.pop());
+            },
             height: function(node) {
                 if (node == null) return 0;
                 return Math.max(this.height(node.left) + this.height(node.left))+1

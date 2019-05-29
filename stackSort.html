@@ -1,0 +1,83 @@
+<script>
+    class QueueStack {
+        constructor() {
+            this.queue1 = [];
+            this.queue2 = [];
+        }
+
+        push(el) {
+            this.queue1.push(el);
+        }
+
+        shift() {
+            if (this.queue1.length==0) return null;
+            while(this.queue1.length!= 1) {
+                this.queue2.push(this.queue1.pop());
+            }
+            var ret = this.queue1.pop();
+            while(this.queue2.length > 0) this.queue1.push(this.queue2.pop());
+            return ret;
+        }
+    }
+    function stackSort(stack) {
+        var tempStack = [];
+        var counter = 0;
+        if (stack.length ==0) {
+            return stack;
+        }
+        var poppedElement = stack.pop();
+        var sortedStack = stackSort(stack);
+        if (sortedStack.length ==0 || peek(sortedStack) > poppedElement) {
+            sortedStack.push(poppedElement);
+            return sortedStack;
+        } else {
+            // We need to swap 
+            while(peek(sortedStack)<poppedElement) {tempStack.push(sortedStack.pop());}
+            sortedStack.push(poppedElement);
+            while(tempStack.length > 0) sortedStack.push(tempStack.pop());
+        }
+
+        return sortedStack;
+    }
+
+    function peek(stack) {
+        return stack[stack.length-1]
+    }
+
+    var stack = [8, 3, 6, 5, 10, 1, 4, 2];
+
+
+    console.log(stackSort(stack));
+    var qs = new QueueStack();
+    qs.push(3);
+    qs.push(2);
+    qs.push(1);
+    console.log(qs.shift());
+    console.log(qs.shift());
+    console.log(qs.shift());
+
+    [1, 2, 3, 4, 5, 6, 7, 8]
+    5
+    3, 7
+    4
+    1, 2, 6, 8
+
+        3
+    2       4
+1               5
+
+        4
+    2       5
+1      3  4    6
+
+        4
+    2       5
+1       3 4     6  
+                    7
+
+            5
+        3       7
+    2     4  6      8
+ 1       
+
+</script>

@@ -1,0 +1,38 @@
+<script>
+
+function sumArray(array) {
+  var count = 0;
+  for (var x=0; x<array.length; x++) {
+    count += array[x];
+  } 
+  return count;
+}
+
+function numberSubset(array, upperBound) {
+  var counter = 0;
+  // Char Counter
+  for (var charIndex=0; charIndex<array.length-2;charIndex++) {
+    var current = array[charIndex];
+    if (current > upperBound) break;
+    if (current < upperBound) counter++;
+    
+    // Subset length
+    for (var subsetLength=2; subsetLength<array.length; subsetLength++) {
+      var bust = false;
+      var subset = [current];
+      for (var argIndex=charIndex+1;argIndex<charIndex+subsetLength-1;argIndex++) {
+        subset.push(array[argIndex]);
+        if (sumArray(array) < upperBound) {
+          bust = true;
+          break;
+        }
+      }
+      if (bust) continue;
+      if (sumArray(array) <= upperBound) counter++;
+    }
+  }
+  return counter;
+}
+
+console.log(numberSubset([1,2,3,4], 5));
+</script>

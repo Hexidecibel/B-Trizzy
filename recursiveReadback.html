@@ -1,0 +1,46 @@
+
+<script>
+        function recursiveReadback(word, direction) {
+            if (word.length == 0) {
+                console.log(word[0]);
+                return;
+            }
+            
+            var letter;
+            var remainder;
+    
+            if (direction == 'f') {
+                letter = word[0];
+                remainder = word.slice(1, word.length);
+            } else {
+              letter = word[word.length-1];
+              remainder = word.slice(0, word.length-1);
+            }
+            console.log(letter);
+            recursiveReadback(remainder, direction)
+        }
+    
+        recursiveReadback('cats', 'f')
+        recursiveReadback('cats', 'b')
+
+        function fibonacci(n) {
+            var array = Array(n+1).fill(0);
+            return fib(n, array);
+        }
+
+        function fib(i, memo) {
+            if (i==0 || i==1) return i;
+
+            if (memo[i] == 0) {
+                memo[i] = fib(i-1, memo)+fib(i-2, memo);
+            }
+            
+            return memo[i];
+        }
+    console.log(fibonacci (1));
+    console.log(fibonacci (3));
+    console.log(fibonacci (7));
+    </script>
+
+
+0, 1, 1, 2, 3, 
